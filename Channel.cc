@@ -1,17 +1,8 @@
-/**
- * @File Name: Channel.cc
- * @brief
- * @Author : leetion in hust email:leetion@hust.edu.cn
- * @Version : 1.0
- * @Creat Date : 2022-04-09
- *
- */
 #include "Channel.h"
 #include "EventLoop.h"
 #include "Logger.h"
 #include <sys/epoll.h>
 
-// to code ...
 const int Channel::kNoneEvent = 0;
 const int Channel::kReadEvent = 1;
 const int Channel::kWriteEvent = 2;
@@ -52,6 +43,7 @@ void Channel::update()
 void Channel::handleEvent(Timestamp receiveTime)
 {
     if (tied_) {
+        // 通过调用std::weak_ptr类提供的lock()方法来获取管理所监测资源的shared_ptr对象
         std::shared_ptr<void> guard = tie_.lock();
         if(guard){
             handleEventWithGuard(receiveTime);
@@ -69,7 +61,7 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
 {
     LOG_INFO("channel handleEvent revents:%d\n", revents_);
 
-    if ((revents_ & EPOLLHUP) && !(revents_ & EPOLLIN))
+    if ((revents_ & EPOLLHUP) && !(revents_ & EPOLLIN)) // 表示对应的文件描述符被挂断；
     {
         if (closeCallback_)
         {
@@ -85,7 +77,7 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
         }
     }
 
-    if (revents_ & (EPOLLIN | EPOLLPRI))
+    if (revents_ & (EPOLLIN | EPOLLPRI))  // 表示对应的文件描述符有紧急的数据可读 表示对应的文件描述符可以读
     {
         if (readCallback_)
         {
@@ -93,7 +85,7 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
         }
     }
 
-    if (revents_ & EPOLLOUT)
+    if (revents_ & EPOLLOUT) // 表示对应的文件描述符可以写；
     {
         if (writeCallback_)
         {

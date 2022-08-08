@@ -55,6 +55,7 @@ EventLoop::~EventLoop(){
     t_loopInThisThread = nullptr;
     /*
     智能指针new出来的资源不需要自己释放
+    poller, wakeupchannel_
     */
 }
 
@@ -159,7 +160,7 @@ void EventLoop::doPendingFunctors(){
     std::vector<Functor> functors;
     callingPendingFunctors_ = true;
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutex_); // unique_lock的lock()方法，手动加锁，自动解锁
         swap(functors, pendingFunctors_);
     }
     for(const Functor& functor:functors) {

@@ -1,11 +1,3 @@
-/**
- * @File Name: EventLoop.h
- * @brief
- * @Author : leetion in hust email:leetion@hust.edu.cn
- * @Version : 1.0
- * @Creat Date : 2022-04-09
- *
- */
 
 #pragma once
 #include "noncopyable.h"
@@ -55,6 +47,7 @@ private:
 
     using ChannelList = std::vector<Channel *>;
 
+    // 它表示在多个线程访问同一个全局资源的时候，能够确保所有其他的线程都不在同一时间内访问相同的资源。
     std::atomic_bool looping_;  //原子操作,通过CAS实现·
     std::atomic_bool quit_;     //标识退出循环
     std::atomic_bool callingPendingFunctors_; //标识当前loop是否有需要执行的回调操作

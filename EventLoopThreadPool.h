@@ -7,7 +7,7 @@
 #include <memory>
 class EventLoop;
 class EventLoopThread;
-
+// subreactor池， thread_nums有相应数量sub_reactor
 class EventLoopThreadPool : noncopyable
 {
 public:
@@ -31,6 +31,6 @@ private:
     bool started_;
     int numThread_;
     int next_;
-    std::vector<std::unique_ptr<EventLoopThread>> threads_;
-    std::vector<EventLoop *> loops_;
+    std::vector<std::unique_ptr<EventLoopThread>> threads_; // 所有sub_reactor
+    std::vector<EventLoop *> loops_; // 每个线程的loop事件循环
 };

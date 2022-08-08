@@ -5,6 +5,7 @@
 #include "Channel.h"
 class EventLoop;
 class InetAddress;
+// main reactor 用户分发客户端连接
 class Acceptor:noncopyable
 {
 public:
@@ -20,7 +21,7 @@ public:
     void listen();
 private:
     void handleRead();
-    EventLoop* loop_; //mainloop
+    EventLoop* loop_; //mainloop /acceptor用的用户定义的那个baseloop，也就是mainloop
     Socket acceptSocket_;
     Channel acceptChannel_;
     NewConnectionCallback newConnectionCallback_;

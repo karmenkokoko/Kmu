@@ -50,14 +50,17 @@ void Socket::setTcpNodelay(bool on){
     int optval = on? 1 : 0;
     ::setsockopt(sockfd_, SOL_SOCKET, TCP_NODELAY, &optval, sizeof optval);
 }
+// 允许重用Ip
 void Socket::setReuseAddr(bool on){
     int optval = on? 1 : 0;
     ::setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 }
+// 重用Port
 void Socket::setReusePort(bool on){
     int optval = on? 1 : 0;
     ::setsockopt(sockfd_, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval);
 }
+// 长连接
 void Socket::setKeepAlive(bool on){
     int optval = on? 1 : 0;
     ::setsockopt(sockfd_, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof optval);

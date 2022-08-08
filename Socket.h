@@ -3,7 +3,7 @@
 
 #include "noncopyable.h"
 class InetAddress;
-
+// 对于socket bind lsiten accept 
 class Socket : noncopyable
 {
 public:

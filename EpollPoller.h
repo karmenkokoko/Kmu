@@ -1,25 +1,20 @@
-/**
- * @File Name: EpollPoller.h
- * @brief epollpoll IO复用的封装
- * @Author : leetion in hust email:leetion@hust.edu.cn
- * @Version : 1.0
- * @Creat Date : 2022-04-09
- *
- */
 #include "Poller.h"
 #include <vector>
 #include <sys/epoll.h>
 class Channel;
 
+// 封装了epoll ，多路事件分发， 包含了指向channel的指针， 以及自己在内核事件表的fd
 class EpollPoller : public Poller
 {
 public:
     EpollPoller(EventLoop* loop);
     ~EpollPoller();
 
-    //重写IO接口
+    //重写IO接口 调用epoll_wait，并将发生事件的channel填写到形参active_channel中
     virtual Timestamp poll(int timeoutMs, ChannelList *activeChannels) override;
+    //往channel_map中添加channel
     virtual void updateChannel(Channel *channel) override;
+    //channel_map中删除channel
     virtual void removeChannel(Channel *channel) override;
 
 private:

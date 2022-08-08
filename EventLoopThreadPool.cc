@@ -41,6 +41,7 @@ EventLoop *EventLoopThreadPool::getNextLoop() {
 }
 
 std::vector<EventLoop *> EventLoopThreadPool::getAllLoops() {
+    // 若为空 则只有个baseloop
     if(loops_.empty()) return std::vector<EventLoop*> (1,baseLoop_);
     else return loops_;
 }

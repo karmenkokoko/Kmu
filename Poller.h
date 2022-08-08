@@ -1,11 +1,3 @@
-/**
- * @File Name: Poller.h
- * @brief  IO复用的抽象类
- * @Author : leetion in hust email:leetion@hust.edu.cn
- * @Version : 1.0
- * @Creat Date : 2022-04-09
- */
-
 #pragma once
 #include "noncopyable.h"
 #include "Timestamp.h"
@@ -13,6 +5,7 @@
 #include <unordered_map>
 class Channel;
 class EventLoop;
+// Poller
 class Poller : noncopyable
 {
 public:

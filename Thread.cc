@@ -31,6 +31,7 @@ void Thread::start(){
     sem_t sem;
     sem_init(&sem, false, 0);
     /*开启线程*/
+    // lambda表达式初始化智能指针控制线程的生存周期
     thread_ = std::shared_ptr<std::thread>(new std::thread([&](){
         tid_ = CurrentThread::tid();
         sem_post(&sem);

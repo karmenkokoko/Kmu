@@ -49,6 +49,7 @@ Timestamp EpollPoller::poll(int timeoutMs, ChannelList *activeChannels)
         LOG_DEBUG("%s timeout! \n", __FUNCTION__);
     }
     else{
+        // 可以用goto 人为重启
         if(saveErrno != EINTR){
             errno = saveErrno;
             LOG_ERROR("EPollPoller::poll() err!");
@@ -65,6 +66,7 @@ void EpollPoller::updateChannel(Channel *channel)
     {
         if (index == kNew)
         {
+            // map加入
             int fd = channel->fd();
             channels_[fd] = channel;
         }
@@ -76,13 +78,16 @@ void EpollPoller::updateChannel(Channel *channel)
     else
     {
         int fd = channel->fd();
+        // 没有活动
         if (channel->isNoneEvent())
         {
+            // 删除
             update(EPOLL_CTL_DEL, channel);
             channel->set_index(kDeleted);
         }
         else
         {
+            // 否则 修改
             update(EPOLL_CTL_MOD, channel);
         }
     }
@@ -91,6 +96,7 @@ void EpollPoller::removeChannel(Channel *channel)
 {
     int fd = channel->fd();
     channels_.erase(fd);
+    // 程序预编译时预编译器将用所在的函数名，返回值是字符串;
     LOG_INFO("func=%s => fd=%d\n", __FUNCTION__, fd);
     int index = channel->index();
     if (index == kAdded)

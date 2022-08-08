@@ -22,6 +22,7 @@ Acceptor::Acceptor(EventLoop *loop, const InetAddress &listenAddr, bool reusepor
     acceptSocket_.setReusePort(true);
     acceptSocket_.bindAddress(listenAddr);
     /*如果有新用户的连接，需要执行回调*/
+    // std::bind  它是一个函数适配器 函数和参数
     acceptChannel_.setReadCallback(std::bind(&Acceptor::handleRead, this));
 }
 
@@ -55,6 +56,7 @@ void Acceptor::handleRead(){
     }
     else{
         LOG_ERROR("%s:%s:%d accept err:%d \n", __FILE__, __FUNCTION__, __LINE__, errno);
+        //进程没有可用的fd
         if(errno == EMFILE) {
             LOG_ERROR("%s:%s:%d sockfd reached limit \n", __FILE__, __FUNCTION__, __LINE__);
         }

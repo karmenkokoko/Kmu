@@ -33,6 +33,7 @@ EventLoop *EventLoopThread::startLoop()
 /**
  * @brief  这个方法是在单独的新线程里面运行的
  */
+// 启动的线程中执行以下方法
 void EventLoopThread::threadFunc()
 {
     EventLoop loop; //创建一个对应的loop
@@ -43,7 +44,7 @@ void EventLoopThread::threadFunc()
     {
         std::unique_lock<std::mutex> lock(mutex_);
         loop_ = &loop;
-        cond_.notify_one();
+        cond_.notify_one(); //通知一个等待的线程
     }
     loop.loop();
     std::unique_lock<std::mutex> lock(mutex_);

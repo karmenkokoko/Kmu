@@ -13,6 +13,7 @@ InetAddress::InetAddress(uint16_t port, std::string ip)
 std::string InetAddress::toIp() const
 {
     char buf[64] = {0};
+    // 将IP地址转换为 Internet标准格式的字符串
     ::inet_ntop(AF_INET, &addr_.sin_addr, buf, sizeof buf);
     return buf;
 }
@@ -22,6 +23,7 @@ std::string InetAddress::toIpPort() const
     char buf[64] = {0};
     ::inet_ntop(AF_INET, &addr_.sin_addr, buf, sizeof buf);
     size_t end = strlen(buf);
+    // 将一个16位数网络字节顺序转换为主机字节顺序。
     uint16_t port = ntohs(addr_.sin_port);
     sprintf(buf + end, ":%u", port);
     return buf;
@@ -31,11 +33,3 @@ uint16_t InetAddress::toPort() const
 {
     return ntohs(addr_.sin_port);
 }
-
-// #include <iostream>
-// int main()
-// {
-//     InetAddress addr(8080);
-//     std::cout << addr.toIpPort();
-//     return 0;
-// }

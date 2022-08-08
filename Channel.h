@@ -1,17 +1,11 @@
-/**
- * @File Name: Channel.h
- * @brief 通道类,一个线程对应一个loop,一个loop可以有多个通道
- * @Author : leetion in hust email:leetion@hust.edu.cn
- * @Version : 1.0
- * @Creat Date : 2022-04-09
- *
- */
-
 #pragma once
 #include "noncopyable.h"
 #include "Timestamp.h"
 #include <functional>
 #include <memory>
+// 封装了sockfd及其所感兴趣的事件，
+// 还有发生事件所要调用的回调函数。
+
 class EventLoop;
 /**
  * @brief
@@ -19,7 +13,7 @@ class EventLoop;
 class Channel : noncopyable
 {
 public:
-    using EventCallback = std::function<void()>;
+    using EventCallback = std::function<void()>; // 指定变量别名
     using ReadEventCallback = std::function<void(Timestamp)>;
 
     Channel(EventLoop *loop, int fd);
@@ -37,8 +31,11 @@ public:
     //防止当Channel被手动remove掉,Channel还在执行回调
     void tie(const std::shared_ptr<void> &);
 
+    // 得到socket套接字
     int fd() const { return fd_; }
+    // 得到感兴趣的事件
     int events() const { return events_; }
+    // 设置真正发生的事件， poller监听到，然后设置real_event
     int set_revents(int revt) { revents_ = revt; }
 
     //设置fd相应的事件状态
@@ -79,10 +76,13 @@ public:
 
     //返回哪个loop拥有了当前Channel
     EventLoop *ownerLoop() const { return loop_; }
+    //在channel所属的eventloop中删除自己
     void remove();
 
 private:
+    //与poller更新fd所感兴趣事件
     void update();
+    //根据发生的具体事件调用相应的回调操作
     void handleEventWithGuard(Timestamp receiveTime);
 
     static const int kNoneEvent;
@@ -95,10 +95,11 @@ private:
     int revents_;     // poller返回的具体的发生的事件
     int index_;
 
-    std::weak_ptr<void> tie_;
-    bool tied_;
+    std::weak_ptr<void> tie_; //观察当前channel的存在状态
+    bool tied_; // 判断tie_是否绑定过
 
     //负责具体的回调操作
+    //发生事件所要调用的具体事件的回调操作
     ReadEventCallback readCallback_;
     EventCallback writeCallback_;
     EventCallback closeCallback_;

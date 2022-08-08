@@ -22,6 +22,7 @@ ssize_t Buffer::readFd(int fd, int *saveErrno)
 
     const int iovcnt = (writable < sizeof extrabuf) ? 2 : 1;
     const ssize_t n = ::readv(fd, vec, iovcnt);
+    // read_buf扩容了， write_idx往后偏移
     if (n < 0)
     {
         *saveErrno = errno;
