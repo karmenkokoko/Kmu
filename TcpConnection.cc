@@ -69,6 +69,8 @@ void TcpConnection::send(const std::string &buf)
 }
 void TcpConnection::shutdown()
 {
+    // 设置此连接为关闭状态
+    // 关闭底层套接字的写端
     if (state_ == kConneced)
     {
         setState(kDisconnecting);
@@ -82,8 +84,8 @@ void TcpConnection::connectEstablished()
 {
     setState(kConneced);
     channel_->tie(shared_from_this());
-    channel_->enableReading(); //向poller注册读事件
-    /*新连接建立，执行回调*/
+    channel_->enableReading(); //向poller注册channel的epollin事件
+    /*新连接建立，执行回调*/ //新连接建立
     connectionCallback_(shared_from_this());
 }
 
@@ -204,6 +206,7 @@ void TcpConnection::sendInLoop(const void *message, size_t len)
             /*一次性数据发送完成，不用给channel设置epollout事件*/
             if (remaining == 0 && writeCompleteCallback_)
             {
+                // 调用 T::shared_from_this 成员函数，将会返回一个新的 std::shared_ptr<T> 对象，它与 pt 共享 t 的所有权。
                 loop_->queueInLoop(std::bind(
                     writeCompleteCallback_, shared_from_this()));
             }

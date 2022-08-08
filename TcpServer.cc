@@ -21,8 +21,9 @@ TcpServer::TcpServer(EventLoop *loop,
                      Option option)
     : loop_(checkLoopNotNull(loop)), ipPort_(listenAddr.toIpPort()), name_(name), acceptor_(new Acceptor(loop_, listenAddr, option == kReusePort)), ThreadPool_(new EventLoopThreadPool(loop, name_)), connectionCallback_(), messageCallback_(), nextConnId_(1), started_(0)
 {
+    // 当有新连接会执行new_connection
     acceptor_->setNewConnectionCallback(std::bind(
-        &TcpServer::newConnection, this, _1, _2));
+        &TcpServer::newConnection, this, _1, _2)); // 2个占位符
 }
 TcpServer::~TcpServer()
 {
@@ -48,21 +49,27 @@ void TcpServer::start()
     if (started_++ == 0) //防止tcp_server被开始多次
     {
         ThreadPool_->start();
+        // 把EventLoopThreadPool给启动了，然后调用acceptor的listen方法，去监听连接而来的套接字
         loop_->runInLoop(std::bind(&Acceptor::listen, acceptor_.get()));
         // loop_->loop();
     }
 }
 
+//有一个新的客户端的连接，acceptor会执行这个回调
 void TcpServer::newConnection(int sockfd, const InetAddress &peerAddr)
 {
+    // 轮询 选择一个subloop管理channel
     EventLoop *ioloop = ThreadPool_->getNextLoop();
+
     char buf[64] = {0};
     snprintf(buf, sizeof buf, "-%s#%d", ipPort_.c_str(), nextConnId_);
     ++nextConnId_;
     std::string connName = name_ + buf;
+
     LOG_INFO("TcpServer::newConnection[%s] - new connection [%s] from %s \n",
         name_.c_str(), connName.c_str(), peerAddr.toIpPort().c_str()
     );
+
     /*通过sockfd获取其绑定的本机的ip地址的端口和信息*/
     sockaddr_in local;
     bzero(&local, sizeof local);
@@ -97,6 +104,8 @@ void TcpServer::removeConnection(const TcpConnectionPtr &conn)
         &TcpServer::removeConnectionInLoop,this,conn
     ));
 }
+// 删除连接map中的信息
+// 执行TcpConnection中的destory_connect函数
 void TcpServer::removeConnectionInLoop(const TcpConnectionPtr &conn)
 {
     LOG_INFO("TcpServer::removeConnectionInLoop [%s] - connection %s\n", 

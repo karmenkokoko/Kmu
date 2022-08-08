@@ -34,8 +34,8 @@ public:
 
     bool conneted() const {return state_ == kConneced;}
 
-    void send(const std::string& buf);
-    void shutdown();
+    void send(const std::string& buf); // 发送数据
+    void shutdown();        // 端开链接
 
     void setConnectionCallback(ConnectionCallback& cb){
         connectionCallback_ = cb;
@@ -54,8 +54,8 @@ public:
         closeCallback_ = cb;
     }
 
-    void connectEstablished();
-    void connectDestroyed();
+    void connectEstablished(); // 建立
+    void connectDestroyed(); // 销毁连接
 private:
     enum StateE
     {
@@ -92,7 +92,7 @@ private:
     CloseCallback closeCallback_;
     HighWaterMarkCallback highWaterMarkCallback_;
 
-    size_t highWaterMark_;
-    Buffer inputBuffer_;
-    Buffer outputBuffer_;
+    size_t highWaterMark_; // 高水位标志
+    Buffer inputBuffer_;    // 接受数据缓冲区
+    Buffer outputBuffer_;   // 发送数据的缓冲区
 };
