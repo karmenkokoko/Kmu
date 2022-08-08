@@ -1,0 +1,3 @@
+/home/karmen/C_program/C++_single/muduoNoboost/build/CMakeFiles/rebuild_cache.dir
+/home/karmen/C_program/C++_single/muduoNoboost/build/CMakeFiles/edit_cache.dir
+/home/karmen/C_program/C++_single/muduoNoboost/build/CMakeFiles/mymuduo.dir
